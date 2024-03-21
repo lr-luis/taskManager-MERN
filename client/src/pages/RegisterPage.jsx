@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 function RegisterPage() {
@@ -21,9 +21,7 @@ function RegisterPage() {
   return (
     <div className="bg-zinc-800 max-w-md p-10 rounded-md">
       {
-        <div className='bg-red-500 p-2 text-white'>
-          {registerErrors}
-        </div>
+        <div className="bg-red-500 p-2 text-white">{registerErrors}</div>
         // registerErrors.map((error, i) => {
         //   error
         // })
@@ -57,6 +55,12 @@ function RegisterPage() {
         {errors.password && <p className="text-red-500">password is required</p>}
         <button type="submit"> Register</button>
       </form>
+      <p className="flex gap.x.2 justify-between">
+        Already have an account?
+        <Link to="/login" className="text-sky-500">
+          Sign in
+        </Link>
+      </p>
     </div>
   )
 }

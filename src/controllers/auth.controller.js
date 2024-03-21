@@ -44,23 +44,23 @@ export const login = async (req, res) => {
   try {
     const userFound = await User.findOne({ email })
     if (!userFound) {
-      return res.status(400).json({ message: 'User not found' })
+      return res.status(400).json(['User not found'])
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password)
     if (!isMatch) {
-      return res.status(400).json({ message: 'Incorrect password' })
+      return res.status(400).json(['Incorrect password'])
     }
 
     const token = await createAccessToken({ id: userFound._id })
     res.cookie('token', token)
-    res.status(201).json({
+    res.status(200).json({
       id: userFound._id,
       username: userFound.username,
       email: userFound.email,
       createdAt: userFound.createdAt,
       updatedAt: userFound.updatedAt,
-      message: 'User registered successfully'
+      message: 'Login successfully'
     })
   } catch (error) {
     console.log('An error ocurred in register', error)
