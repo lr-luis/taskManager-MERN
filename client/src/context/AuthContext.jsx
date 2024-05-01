@@ -1,5 +1,6 @@
+import Cookies from "js-cookie";
 import { createContext, useContext, useEffect, useState } from "react";
-import { loginRequest, registerRequest } from '../api/auth';
+import { loginRequest, registerRequest, verifyTokenRequest } from '../api/auth';
 
 export const AuthContext = createContext()
 export const useAuth = () => {
@@ -13,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [errors, setErrors] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const signUp = async (user) => {
     try {
@@ -30,6 +32,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await loginRequest(user)
       console.log('res::', res)
+      setUser(res.data)
+      setIsAuthenticated(true)
     } catch (error) {
       console.error(error)
       if (Array.isArray(error.response.data)) {
@@ -49,10 +53,43 @@ export const AuthProvider = ({ children }) => {
       return () => clearTimeout(timer)
     }
   }, [errors])
+
+  useEffect(() => {
+    async function checkLogin () {
+      const cookies = Cookies.get()
+      if (!cookies.token) { 
+        setIsAuthenticated(false)
+        setUser(null)
+        setLoading(false)
+        return
+      }
+        try {
+          const res = await verifyTokenRequest(cookies.token)
+          setLoading(true)
+          if (!res.data) {
+            setIsAuthenticated(false)
+            setLoading(false)
+            return
+          }
+          console.warn('si esta autenticado')
+          setIsAuthenticated(true)
+          setLoading(false)
+          setUser(res.data)
+        } catch (error) {
+          console.error(error)
+          setLoading(false)
+          setIsAuthenticated(false)
+          setUser(null)
+        }
+      
+    }
+    checkLogin()
+  }, [])
   return (
     <AuthContext.Provider value={{
       signUp,
       signIn,
+      loading,
       user,
       isAuthenticated,
       errors
