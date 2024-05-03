@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute'
+import Navbar from './components/Navbar'
 import { AuthProvider } from './context/AuthContext'
 import { TaskProvider } from './context/TasksContext'
 import HomePage from './pages/HomePage'
@@ -14,6 +15,7 @@ function App() {
     <AuthProvider>
       <TaskProvider>
         <BrowserRouter>
+          <Navbar></Navbar>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -27,8 +29,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </TaskProvider>
-    </AuthProvider>
-  )
+    </AuthProvider>  )
 }
 
 export default App
