@@ -21,12 +21,18 @@ export const createTask = async (req, res) => {
 }
 
 export const getTask = async (req, res) => {
-  const { id } = req.params
-  const taskFound = await Task.findById(id).populate('user')
-  if (!taskFound) {
-    return res.status(404).json({ message: 'Task not found' })
+  try {
+    const { id } = req.params
+    const taskFound = await Task.findById(id).populate('user')
+    if (!taskFound) {
+      return res.status(404).json({ message: 'Task not found' })
+    }
+    res.status(200).json(taskFound)
+  } catch (error) {
+    return res.status(404).json({
+      message: "Task not found"
+    })
   }
-  res.status(200).json(taskFound)
 }
 
 export const deleteTask = async (req, res) => {
